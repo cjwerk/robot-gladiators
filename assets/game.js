@@ -10,22 +10,39 @@ var fight = function(enemy) {
   console.log(enemy);
   
   while (playerInfo.health > 0 && enemy.health > 0) {
-    // ask user if they'd liked to fight or run
-    var promptFight = window.prompt('Would you like FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
-
-    // if user picks "skip" confirm and then stop the loop
-    if (promptFight === "skip" || promptFight === "SKIP") {
-      // confirm user wants to skip
-      var confirmSkip = window.confirm("Are you sure you'd like to quit?");
-
-      // if yes (true), leave fight
-      if (confirmSkip) {
-        window.alert(playerInfo.name + ' has decided to skip this fight. Goodbye!');
-        // subtract money from playerMoney for skipping
-        playerInfo.money = Math.max(0, playerInfo.money - 10);
-        console.log("playermoney", playerInfo.money)
-        break;
+    // ask user if they'd like to fight or skip using fightOrSkip function
+    if (fightOrSkip()) {
+      // if true, leave fight by breaking loop
+      break;
+    }
+    var fightOrSkip = function() {
+      // ask user if they'd like to fight or skip using  function
+      var promptFight = window.prompt('Would you like FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+    
+      if (promptFight === "" || promptFight === null) {
+        window.alert("You need to provide a valid answer! Please try again.");
+        return fightOrSkip();
       }
+    
+      promptFight = promptFight.toLowerCase();
+
+      if (promptFight === "skip") {
+        // confirm user wants to skip
+        var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+    
+        // if yes (true), leave fight
+    if (confirmSkip) {
+      window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
+      // subtract money from playerMoney for skipping, but don't let them go into the negative
+      playerInfo.money = Math.max(0, playerInfo.money - 10);
+
+      // return true if user wants to leave
+      return true;
+    }fight();
+          shop();
+        }
+      }
+    }
     }
 
     // remove enemy's health by subtracting the amount set in the playerAttack variable
@@ -74,8 +91,8 @@ var fight = function(enemy) {
       window.alert("You have lost your robot in battle! Game Over!");
       break;
     }
-  }
-};
+    ;
+
 var getPlayerName = function() {
   var name ="";
 while (name === "" || name === null) {
@@ -181,34 +198,25 @@ window.alert("Thank you for playing Robot Gladiators! Come back soon!")
 var shop = function() {
   // ask player what they'd like to do
   var shopOptionPrompt = window.prompt(
-    "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one: 'REFILL', 'UPGRADE', or 'LEAVE' to make a choice."
+    "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one 1 for REFILL, 2 for UPGRADE, or 3 for LEAVE."
   );
   // use switch to carry out action
-switch (shopOptionPrompt) {
-  case "REFILL": // new case
-  case "refill":
-    refillHealth = function() {
-      if (this.money >= 7) {
-        window.alert("Refilling player's health by 20 for 7 dollars.");
-        this.health += 20;
-        this.money -= 7;
-      } 
-      else {
-        window.alert("You don't have enough money!");
-      }
-    },
-    upgradeAttack= function() {
-      if (this.money >= 7) {
-        window.alert("Upgrading player's attack by 6 for 7 dollars.");
-        this.attack += 6;
-        this.money -= 7;
-      } 
-      else {
-        window.alert("You don't have enough money!");
-      }
-    }
+  shopOptionPrompt = parseInt(shopOptionPrompt);
+  switch (shopOptionPrompt) {
+    case 1:
+      playerInfo.refillHealth();
+      break;
+    case 2:
+      playerInfo.upgradeAttack();
+      break;
+    case 3:
+      window.alert("Leaving the store.");
+      break;
+    default:
+      window.alert("You did not pick a valid option. Try again.");
+      shop();
+      break;
 
-  break;
   case "LEAVE": // new case
   case "leave":
     window.alert("Leaving the store.");
